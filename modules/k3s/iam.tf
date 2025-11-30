@@ -64,6 +64,25 @@ resource "aws_iam_role_policy" "k3s_control_plane" {
           "kms:DescribeKey"
         ]
         Resource = ["*"]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          # ECR Pull
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:GetRepositoryPolicy",
+          "ecr:DescribeRepositories",
+          "ecr:ListImages",
+          "ecr:BatchGetImage",
+          # ECR Push
+          "ecr:InitiateLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload",
+          "ecr:PutImage"
+        ]
+        Resource = "*"
       }
     ]
   })
@@ -97,13 +116,19 @@ resource "aws_iam_role_policy" "k3s_worker" {
         Action = [
           "ec2:DescribeInstances",
           "ec2:DescribeRegions",
+          # ECR Pull
           "ecr:GetAuthorizationToken",
           "ecr:BatchCheckLayerAvailability",
           "ecr:GetDownloadUrlForLayer",
           "ecr:GetRepositoryPolicy",
           "ecr:DescribeRepositories",
           "ecr:ListImages",
-          "ecr:BatchGetImage"
+          "ecr:BatchGetImage",
+          # ECR Push
+          "ecr:InitiateLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload",
+          "ecr:PutImage"
         ]
         Resource = "*"
       }
