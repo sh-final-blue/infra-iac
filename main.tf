@@ -132,3 +132,59 @@ module "bastion" {
     Project     = var.project_name
   }
 }
+
+# ===========================================
+# K3s Cluster Module
+# ===========================================
+
+module "k3s" {
+  source = "./modules/k3s"
+  count  = var.create_k3s ? 1 : 0
+
+  name_prefix          = var.project_name
+  vpc_id               = module.vpc.vpc_id
+  subnet_ids           = module.vpc.public_subnet
+  key_name             = var.k3s_key_name
+  master_instance_type = var.k3s_master_instance_type
+  master_volume_size   = var.k3s_master_volume_size
+  k3s_token            = var.k3s_token
+  allocate_eip         = var.k3s_allocate_eip
+
+  workers = {
+    "worker-wasm" = {
+      instance_type = var.k3s_worker_instance_type
+      volume_size   = var.k3s_worker_volume_size
+      role          = "worker"
+      workload      = "wasm"
+      subnet_index  = 0
+    }
+    "worker-build" = {
+      instance_type = var.k3s_worker_instance_type
+      volume_size   = var.k3s_worker_volume_size
+      role          = "worker"
+      workload      = "build"
+      subnet_index  = 1
+    }
+    "worker-observability" = {
+      instance_type = var.k3s_worker_instance_type
+      volume_size   = var.k3s_worker_volume_size
+      role          = "worker"
+      workload      = "observability"
+      subnet_index  = 0
+    }
+    "worker-infra" = {
+      instance_type = var.k3s_worker_instance_type
+      volume_size   = var.k3s_worker_volume_size
+      role          = "worker"
+      workload      = "infra"
+      subnet_index  = 1
+    }
+  }
+
+  allowed_ssh_cidr_blocks = var.k3s_allowed_ssh_cidr_blocks
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
+  }
+}

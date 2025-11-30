@@ -140,3 +140,37 @@ output "bastion_security_group_id" {
   description = "Bastion Host security group ID"
   value       = module.security_groups.bastion_sg_id
 }
+
+# ===========================================
+# K3s Cluster Outputs
+# ===========================================
+
+output "k3s_master_public_ip" {
+  description = "K3s master public IP"
+  value       = var.create_k3s ? module.k3s[0].master_public_ip : null
+}
+
+output "k3s_master_private_ip" {
+  description = "K3s master private IP"
+  value       = var.create_k3s ? module.k3s[0].master_private_ip : null
+}
+
+output "k3s_worker_instances" {
+  description = "K3s worker instances"
+  value       = var.create_k3s ? module.k3s[0].worker_instances : null
+}
+
+output "k3s_security_group_id" {
+  description = "K3s security group ID"
+  value       = var.create_k3s ? module.k3s[0].security_group_id : null
+}
+
+output "k3s_ssh_master_command" {
+  description = "SSH command to K3s master"
+  value       = var.create_k3s ? module.k3s[0].ssh_master_command : null
+}
+
+output "k3s_kubeconfig_command" {
+  description = "Command to get kubeconfig from K3s master"
+  value       = var.create_k3s ? module.k3s[0].kubeconfig_command : null
+}

@@ -147,3 +147,62 @@ variable "bastion_key_name" {
   type        = string
   default     = "blue-key"
 }
+
+# ===========================================
+# K3s Cluster Configuration
+# ===========================================
+
+variable "create_k3s" {
+  description = "Whether to create K3s cluster"
+  type        = bool
+  default     = true
+}
+
+variable "k3s_key_name" {
+  description = "EC2 Key Pair name for K3s nodes"
+  type        = string
+  default     = "blue-key"
+}
+
+variable "k3s_master_instance_type" {
+  description = "Instance type for K3s master"
+  type        = string
+  default     = "m7i-flex.large"
+}
+
+variable "k3s_master_volume_size" {
+  description = "Root volume size for K3s master (GB)"
+  type        = number
+  default     = 50
+}
+
+variable "k3s_worker_instance_type" {
+  description = "Instance type for K3s workers"
+  type        = string
+  default     = "m7i-flex.large"
+}
+
+variable "k3s_worker_volume_size" {
+  description = "Root volume size for K3s workers (GB)"
+  type        = number
+  default     = 50
+}
+
+variable "k3s_token" {
+  description = "K3s cluster token (generate with: openssl rand -hex 32)"
+  type        = string
+  sensitive   = true
+  default     = "default-k3s-token-change-me"
+}
+
+variable "k3s_allocate_eip" {
+  description = "Allocate Elastic IP for K3s master"
+  type        = bool
+  default     = true
+}
+
+variable "k3s_allowed_ssh_cidr_blocks" {
+  description = "CIDR blocks allowed to SSH into K3s nodes"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}

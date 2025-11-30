@@ -2,6 +2,86 @@
 
 이 프로젝트의 주요 변경 사항을 기록합니다.
 
+## [1.1.0] - 2025-11-30
+
+### K3s Kubernetes 클러스터 추가
+
+경량 Kubernetes 클러스터인 K3s를 Public Subnet에 배포하기 위한 모듈 추가
+
+#### 구성 요소
+
+| 리소스 | 타입 | 설명 |
+|--------|------|------|
+| K3s Master | m7i-flex.large | Control Plane (1대) |
+| Worker-Wasm | m7i-flex.large | Wasm 워크로드 전용 |
+| Worker-Build | m7i-flex.large | CI/CD 빌드 작업 |
+| Worker-Observability | m7i-flex.large | 모니터링/로깅 |
+| Worker-Infra | m7i-flex.large | 인프라 관리 도구 |
+
+#### 추가된 파일
+
+```
+modules/k3s/
+├── main.tf        # EC2 인스턴스 (Master, Workers), EIP
+├── iam.tf         # IAM 역할 (Control Plane, Worker)
+├── sg.tf          # 보안 그룹 (22, 80, 443, 6443, 30000-32767)
+├── variables.tf   # 모듈 변수
+├── outputs.tf     # 출력값
+└── versions.tf    # Provider 버전
+```
+
+#### IAM 권한
+
+**Control Plane:**
+- EC2 Describe/Create/Modify/Delete
+- ELB 전체 권한
+- Autoscaling Describe
+- KMS DescribeKey
+
+**Worker:**
+- EC2 Describe
+- ECR 이미지 Pull 권한
+
+#### 보안 그룹 규칙
+
+| 포트 | 프로토콜 | 소스 | 설명 |
+|------|----------|------|------|
+| 22 | TCP | 설정된 CIDR | SSH 접속 |
+| 80 | TCP | 0.0.0.0/0 | HTTP |
+| 443 | TCP | 0.0.0.0/0 | HTTPS |
+| 6443 | TCP | 설정된 CIDR | K3s API Server |
+| 30000-32767 | TCP | 0.0.0.0/0 | NodePort 서비스 |
+| 전체 | 전체 | Self | 클러스터 내부 통신 |
+
+#### 설치 방식
+
+**수동 설치**: EC2 인스턴스 생성 후 SSH 접속하여 K3s 수동 설치 필요
+
+```bash
+# 1. terraform apply로 EC2 인스턴스 생성
+terraform apply
+
+# 2. Master SSH 접속 후 K3s 서버 설치
+$(terraform output -raw k3s_ssh_master_command)
+curl -sfL https://get.k3s.io | sh -s - server --cluster-init
+
+# 3. Worker 노드에 K3s agent 설치
+# 자세한 내용은 README.md 참조
+```
+
+---
+
+## [1.0.1] - 2025-11-30
+
+### Bastion Host Amazon Linux 2023 업그레이드
+
+- AMI: Amazon Linux 2 → Amazon Linux 2023
+- 패키지 매니저: yum → dnf
+- MySQL 클라이언트: mysql → mariadb105
+- 루트 볼륨: 8GB → 30GB (AL2023 요구사항)
+
+---
+
 ## [1.0.0] - 2025-11-30
 
 ### 인프라 배포 완료
