@@ -295,8 +295,8 @@ kubectl get nodes
 | 리소스 | 스펙 | 시간당 비용 | 8일 (192h) 예상 |
 |--------|------|-------------|-----------------|
 | **EC2 - Bastion** | t3.micro | $0.0104 | $2.00 |
-| **EC2 - K3s Master** | m7i-flex.large | $0.0840 | $16.13 |
-| **EC2 - K3s Workers (4)** | m7i-flex.large × 4 | $0.3360 | $64.51 |
+| **EC2 - K3s Master** | m7i-flex.large | $0.11771 | $22.60 |
+| **EC2 - K3s Workers (4)** | m7i-flex.large × 4 | $0.47084 | $90.40 |
 | **NAT Gateway** | 1개 | $0.045 | $8.64 |
 | **ALB** | 1개 | $0.0225 | $4.32 |
 | **EBS - Bastion** | 30GB gp3 | - | $0.65 |
@@ -305,7 +305,7 @@ kubectl get nodes
 | **Public IPv4** | 7개 (EIP 2 + EC2 4 + NAT 1) | $0.005 × 7 | $6.72 |
 | **WAF** | 1 Web ACL | - | $1.35 |
 | **CloudFront** | 트래픽 미발생시 | - | $0.00 |
-| | | **합계** | **~$110** |
+| | | **합계** | **~$142** |
 
 ### 비용 절감 팁
 - 미사용시 EC2 인스턴스 중지 (EBS 비용만 발생)
