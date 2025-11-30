@@ -54,6 +54,7 @@ resource "aws_instance" "k3s_master" {
     Name = "${var.name_prefix}-k3s-master"
     Role = "k3s-master"
   })
+
 }
 
 # ===========================================

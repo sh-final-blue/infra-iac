@@ -49,7 +49,9 @@ modules/k3s/
 | 22 | TCP | 설정된 CIDR | SSH 접속 |
 | 80 | TCP | 0.0.0.0/0 | HTTP |
 | 443 | TCP | 0.0.0.0/0 | HTTPS |
-| 6443 | TCP | 설정된 CIDR | K3s API Server |
+| 6443 | TCP | 설정된 CIDR | K3s API Server (external) |
+| 6443 | TCP | Self | K3s API Server (internal) |
+| 8472 | UDP | Self | Flannel VXLAN (Pod 통신) |
 | 30000-32767 | TCP | 0.0.0.0/0 | NodePort 서비스 |
 | 전체 | 전체 | Self | 클러스터 내부 통신 |
 

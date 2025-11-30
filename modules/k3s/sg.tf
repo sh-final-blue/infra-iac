@@ -16,13 +16,22 @@ resource "aws_security_group" "k3s" {
     description = "SSH access"
   }
 
-  # K3s API Server
+  # K3s API Server (external)
   ingress {
     from_port   = 6443
     to_port     = 6443
     protocol    = "tcp"
     cidr_blocks = var.allowed_ssh_cidr_blocks
-    description = "K3s API Server"
+    description = "K3s API Server (external)"
+  }
+
+  # K3s API Server (workers -> master)
+  ingress {
+    from_port   = 6443
+    to_port     = 6443
+    protocol    = "tcp"
+    self        = true
+    description = "K3s API Server (internal)"
   }
 
   # HTTP
@@ -50,6 +59,15 @@ resource "aws_security_group" "k3s" {
     protocol    = "-1"
     self        = true
     description = "Internal cluster communication"
+  }
+
+  # Flannel VXLAN (CNI)
+  ingress {
+    from_port   = 8472
+    to_port     = 8472
+    protocol    = "udp"
+    self        = true
+    description = "Flannel VXLAN for Pod communication"
   }
 
   # NodePort range
