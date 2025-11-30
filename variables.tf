@@ -127,13 +127,13 @@ variable "bastion_allocate_eip" {
 variable "bastion_root_volume_size" {
   description = "Root volume size for Bastion (GB)"
   type        = number
-  default     = 8
+  default     = 30
 }
 
 variable "bastion_ami_id" {
-  description = "Specific AMI ID for Bastion Host (empty string to use latest Amazon Linux 2)"
+  description = "Specific AMI ID for Bastion Host (empty string to use latest Amazon Linux 2023)"
   type        = string
-  default     = "ami-0f810accf42b4af77"
+  default     = ""
 }
 
 variable "bastion_allowed_cidr_blocks" {

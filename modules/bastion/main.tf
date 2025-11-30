@@ -2,25 +2,30 @@
 # Bastion Host Module
 # ===========================================
 
-# 최신 Amazon Linux 2 AMI 조회
-data "aws_ami" "amazon_linux_2" {
+# 최신 Amazon Linux 2023 AMI 조회
+data "aws_ami" "amazon_linux_2023" {
   most_recent = true
   owners      = ["amazon"]
 
   filter {
     name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+    values = ["al2023-ami-*-x86_64"]
   }
 
   filter {
     name   = "virtualization-type"
     values = ["hvm"]
   }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
 }
 
 # Bastion Host EC2 Instance
 resource "aws_instance" "bastion" {
-  ami                         = var.ami_id != "" ? var.ami_id : data.aws_ami.amazon_linux_2.id
+  ami                         = var.ami_id != "" ? var.ami_id : data.aws_ami.amazon_linux_2023.id
   instance_type               = var.instance_type
   key_name                    = var.key_name
   subnet_id                   = var.public_subnet_id
@@ -36,8 +41,8 @@ resource "aws_instance" "bastion" {
 
   user_data = <<-EOF
               #!/bin/bash
-              yum update -y
-              yum install -y mysql
+              dnf update -y
+              dnf install -y mariadb105
               EOF
 
   tags = merge(var.tags, {
