@@ -161,7 +161,7 @@ variable "bastion_key_name" {
 variable "create_k3s" {
   description = "Whether to create K3s cluster"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "k3s_key_name" {
