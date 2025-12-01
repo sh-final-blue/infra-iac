@@ -64,6 +64,16 @@ output "alb_dns_name" {
   value       = module.alb.alb_dns_name
 }
 
+output "alb_default_target_group_arn" {
+  description = "ALB Default Target Group ARN"
+  value       = module.alb.default_target_group_arn
+}
+
+output "alb_https_listener_arn" {
+  description = "ALB HTTPS Listener ARN"
+  value       = module.alb.https_listener_arn
+}
+
 # ===========================================
 # CloudFront Outputs
 # ===========================================
@@ -86,6 +96,25 @@ output "cloudfront_hosted_zone_id" {
 output "cloudfront_status" {
   description = "CloudFront Distribution Status"
   value       = var.create_cloudfront ? module.cloudfront[0].cloudfront_status : null
+}
+
+# ===========================================
+# S3 Frontend Outputs
+# ===========================================
+
+output "frontend_s3_bucket_id" {
+  description = "Frontend S3 bucket ID"
+  value       = var.create_cloudfront ? module.cloudfront[0].s3_bucket_id : null
+}
+
+output "frontend_s3_bucket_arn" {
+  description = "Frontend S3 bucket ARN"
+  value       = var.create_cloudfront ? module.cloudfront[0].s3_bucket_arn : null
+}
+
+output "frontend_s3_bucket_domain_name" {
+  description = "Frontend S3 bucket domain name"
+  value       = var.create_cloudfront ? module.cloudfront[0].s3_bucket_domain_name : null
 }
 
 # ===========================================

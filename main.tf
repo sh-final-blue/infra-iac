@@ -55,8 +55,10 @@ module "alb" {
   source = "./modules/alb"
 
   name_prefix           = var.project_name
+  vpc_id                = module.vpc.vpc_id
   public_subnet_ids     = module.vpc.public_subnet
   alb_security_group_id = module.security_groups.alb_sg_id
+  certificate_arn       = var.alb_certificate_arn
 
   tags = {
     Environment = var.environment
@@ -88,21 +90,20 @@ module "waf" {
 }
 
 # ===========================================
-# CloudFront Distribution Module
+# CloudFront Distribution Module (S3 Frontend - www.eunha.icu)
 # ===========================================
 
 module "cloudfront" {
   source = "./modules/cloudfront"
   count  = var.create_cloudfront ? 1 : 0
 
-  name_prefix         = var.project_name
-  alb_dns_name        = module.alb.alb_dns_name
-  acm_certificate_arn = var.cloudfront_certificate_arn
-  alb_certificate_arn = var.alb_certificate_arn
-  aliases             = ["*.eunha.icu"]
-  default_root_object = ""
-  price_class         = "PriceClass_100"
-  web_acl_id          = var.create_waf ? module.waf[0].web_acl_arn : ""
+  name_prefix          = var.project_name
+  s3_bucket_name       = var.frontend_s3_bucket_name
+  acm_certificate_arn  = var.cloudfront_certificate_arn
+  aliases              = ["www.eunha.icu"]
+  price_class          = "PriceClass_100"
+  web_acl_id           = var.create_waf ? module.waf[0].web_acl_arn : ""
+  cors_allowed_origins = ["https://www.eunha.icu"]
 
   tags = {
     Environment = var.environment

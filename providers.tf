@@ -19,6 +19,12 @@ provider "aws" {
       ManagedBy   = "Terraform"
     }
   }
+
+  # kOps가 추가하는 태그 무시
+  ignore_tags {
+    keys = ["SubnetType"]
+    key_prefixes = ["kubernetes.io/cluster/sfbank-blue"]
+  }
 }
 
 # US-EAST-1 provider for CloudFront WAF (WAF for CloudFront must be in us-east-1)

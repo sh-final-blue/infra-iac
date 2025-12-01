@@ -53,9 +53,9 @@ variable "private_db_subnet_cidrs" {
 # ===========================================
 
 variable "alb_certificate_arn" {
-  description = "ACM certificate ARN for ALB HTTPS listener (optional)"
+  description = "ACM certificate ARN for ALB HTTPS listener (ap-northeast-2)"
   type        = string
-  default     = ""
+  default     = "arn:aws:acm:ap-northeast-2:217350599014:certificate/ead557d2-eee7-4b32-8730-43ee48076edc"
 }
 
 # ===========================================
@@ -72,6 +72,12 @@ variable "cloudfront_certificate_arn" {
   description = "ACM certificate ARN for CloudFront (must be in us-east-1)"
   type        = string
   default     = "arn:aws:acm:us-east-1:217350599014:certificate/d8fc1fde-3b6f-45ec-9c4a-5738ab96a22f"
+}
+
+variable "frontend_s3_bucket_name" {
+  description = "S3 bucket name for frontend static files"
+  type        = string
+  default     = "eunha-icu-frontend"
 }
 
 # ===========================================
