@@ -40,6 +40,25 @@ resource "aws_ecr_repository" "frontend" {
   })
 }
 
+# FaaS Builder Repository
+resource "aws_ecr_repository" "faas_builder" {
+  name                 = "${var.project_name}-faas-builder"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+
+  encryption_configuration {
+    encryption_type = "AES256"
+  }
+
+  tags = merge(var.tags, {
+    Name    = "${var.project_name}-faas-builder"
+    Service = "faas-builder"
+  })
+}
+
 # ===========================================
 # ECR Lifecycle Policies
 # ===========================================
@@ -96,6 +115,55 @@ resource "aws_ecr_lifecycle_policy" "backend" {
 # Frontend Lifecycle Policy
 resource "aws_ecr_lifecycle_policy" "frontend" {
   repository = aws_ecr_repository.frontend.name
+
+  policy = jsonencode({
+    rules = [
+      {
+        rulePriority = 1
+        description  = "Keep last 10 production images"
+        selection = {
+          tagStatus     = "tagged"
+          tagPrefixList = ["v", "release"]
+          countType     = "imageCountMoreThan"
+          countNumber   = 10
+        }
+        action = {
+          type = "expire"
+        }
+      },
+      {
+        rulePriority = 2
+        description  = "Keep last 5 development images"
+        selection = {
+          tagStatus     = "tagged"
+          tagPrefixList = ["dev", "feature", "hotfix"]
+          countType     = "imageCountMoreThan"
+          countNumber   = 5
+        }
+        action = {
+          type = "expire"
+        }
+      },
+      {
+        rulePriority = 3
+        description  = "Delete untagged images older than 1 day"
+        selection = {
+          tagStatus   = "untagged"
+          countType   = "sinceImagePushed"
+          countUnit   = "days"
+          countNumber = 1
+        }
+        action = {
+          type = "expire"
+        }
+      }
+    ]
+  })
+}
+
+# FaaS Builder Lifecycle Policy
+resource "aws_ecr_lifecycle_policy" "faas_builder" {
+  repository = aws_ecr_repository.faas_builder.name
 
   policy = jsonencode({
     rules = [
